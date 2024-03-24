@@ -5,8 +5,6 @@ import { copyGrid, createGrid } from "./util/helper";
 import { Stack, TextField } from "@mui/material";
 
 function App() {
-    // const [dim, setDim] = useState({ m: 1, n: 1 });
-    // const [startPos, setStartPos] = useState({ r: 1, c: 1 });
     const [status, setStatus] = useState({
         grid: createGrid(1, 1, 0, 0),
         q: [],
@@ -14,9 +12,8 @@ function App() {
         dim: { m: 1, n: 1 },
         startPos: { r: 0, c: 0 },
     });
-    // const [gridOpen, setGridOpen] = useState(true);
-    // const [startPosOpen, setStartPosOpen] = useState(false);
     useEffect(() => {
+        console.log("================");
         setTimeout(() => {
             if (status.q.length > 0) {
                 const offsets = [
@@ -41,6 +38,7 @@ function App() {
                                 next[1] < status.dim.n
                             ) {
                                 if (newGrid[next[0]][next[1]] == 0) {
+                                    console.log(next);
                                     nexts.push(next);
                                     newGrid[next[0]][next[1]] = status.step + 1;
                                 }
@@ -55,10 +53,7 @@ function App() {
     }, [status]);
 
     const handleStart = () => {
-        setStatus({ ...status, q: [[status.startPos.r - 1, status.startPos.c - 1]] });
-        console.log(status);
-        // setStartPosOpen(false);
-        // setGridOpen(true);
+        setStatus({ ...status, q: [[status.startPos.r, status.startPos.c]] });
     };
 
     const handleDimChange = (event) => {
