@@ -6,14 +6,17 @@ import { Stack, TextField } from "@mui/material";
 
 function App() {
     const [status, setStatus] = useState({
+        // initial grid is 1x1 and start pos is [0,0]
         grid: createGrid(1, 1, 0, 0),
         q: [],
         step: 1,
         dim: { m: 1, n: 1 },
+
+        // startPos is 0-indexed
         startPos: { r: 0, c: 0 },
     });
+
     useEffect(() => {
-        console.log("================");
         setTimeout(() => {
             if (status.q.length > 0) {
                 const offsets = [
@@ -38,7 +41,6 @@ function App() {
                                 next[1] < status.dim.n
                             ) {
                                 if (newGrid[next[0]][next[1]] == 0) {
-                                    console.log(next);
                                     nexts.push(next);
                                     newGrid[next[0]][next[1]] = status.step + 1;
                                 }
@@ -52,10 +54,17 @@ function App() {
         }, 300);
     }, [status]);
 
+    /**
+     * Start visualizer
+     */
     const handleStart = () => {
+        // push start pos to q to trigger simulation
         setStatus({ ...status, q: [[status.startPos.r, status.startPos.c]] });
     };
 
+    /**
+     * Change dim of grid given input value
+     */
     const handleDimChange = (event) => {
         if (event.target.value > 0) {
             let newDim = { ...status.dim, [event.target.name]: event.target.value };
@@ -67,6 +76,9 @@ function App() {
         }
     };
 
+    /**
+     * Change start position on grid given input value
+     */
     const handleStartPosChange = (event) => {
         if (event.target.value > 0) {
             let newStartPos = { ...status.startPos, [event.target.name]: event.target.value - 1 };
@@ -78,6 +90,9 @@ function App() {
         }
     };
 
+    /**
+     * Reset grid and start pos to default
+     */
     const handleReset = () => {
         setStatus({
             grid: createGrid(1, 1, 0, 0),
@@ -87,6 +102,7 @@ function App() {
             startPos: { r: 0, c: 0 },
         });
     };
+
     return (
         <>
             <Stack className="inputArea" direction="row" spacing={1}>
