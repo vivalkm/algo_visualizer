@@ -11,6 +11,11 @@
     font-weight: 800;
 }
 
+.tile:hover {
+    box-shadow: 5px 5px rgba(76, 175, 80, 0.4);
+    cursor: grab;
+}
+
 .c1 {
     background-color: rgba(63, 81, 181, 1);
 }

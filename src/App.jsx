@@ -4,6 +4,8 @@ import Grid from "./components/Grid";
 import { copyGrid, createGrid } from "./util/helper";
 import { Button, Container, Stack, TextField } from "@mui/material";
 
+const DIM_LIMIT = 20;
+
 function App() {
     const [status, setStatus] = useState({
         // initial grid is 1x1 and start pos is [0,0]
@@ -73,7 +75,7 @@ function App() {
      */
     const handleDimChange = (event) => {
         let value = Math.round(event.target.value);
-        if (value > 0 && value <= 20) {
+        if (value > 0 && value <= DIM_LIMIT) {
             let newDim = { ...status.dim, [event.target.name]: value };
             setStatus({
                 ...status,
@@ -92,7 +94,7 @@ function App() {
         let value = Math.round(event.target.value);
         if (value > 0) {
             let newStartPos = { ...status.startPos, [event.target.name]: value - 1 };
-            if (newStartPos.r >= status.dim || newStartPos.c >= status.dim.n) {
+            if (newStartPos.r >= status.dim.m || newStartPos.c >= status.dim.n) {
                 window.alert("Start position must be within the grid.");
             } else {
                 setStatus({
@@ -101,6 +103,20 @@ function App() {
                     grid: createGrid(status.dim.m, status.dim.n, newStartPos.r, newStartPos.c),
                 });
             }
+        }
+    };
+
+    const handleSelectStartPos = (r, c) => {
+        let newStartPos = { r, c };
+        
+        if (newStartPos.r >= status.dim.m || newStartPos.c >= status.dim.n) {
+            window.alert("Start position must be within the grid.");
+        } else {
+            setStatus({
+                ...status,
+                startPos: newStartPos,
+                grid: createGrid(status.dim.m, status.dim.n, newStartPos.r, newStartPos.c),
+            });
         }
     };
 
@@ -176,7 +192,7 @@ function App() {
             </Container>
             <Container maxWidth="sm">
                 <div className="grid">
-                    <Grid status={status} />
+                    <Grid status={status} handleSelectStartPos={handleSelectStartPos} />
                 </div>
             </Container>
         </>
