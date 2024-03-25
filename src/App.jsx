@@ -36,6 +36,7 @@ function App() {
         dim: DEFAULT_DIM,
         startPos: DEFAULT_START_POS,
         algo: "bfs",
+        disabledInput: false,
     });
 
     useEffect(() => {
@@ -57,11 +58,9 @@ function App() {
                         let pos = status.frontier.shift();
                         for (let offset of OFFSETS) {
                             let next = getNextPos(pos, offset);
-                            if (isValidPos(next)) {
-                                if (newGrid[next[0]][next[1]] == 0) {
-                                    nexts.push(next);
-                                    newGrid[next[0]][next[1]] = status.step + 1;
-                                }
+                            if (isValidPos(next) && newGrid[next[0]][next[1]] == 0) {
+                                nexts.push(next);
+                                newGrid[next[0]][next[1]] = status.step + 1;
                             }
                         }
                     }
@@ -75,50 +74,49 @@ function App() {
                         setTimeout(() => {
                             setStatus(newStatus);
                         }, PAUSE_BETWEEN_STEP);
+                    } else {
+                        setStatus({ ...status, disabledInput: false });
                     }
                 }
             } else if (status.algo === "dfs") {
                 let nexts = [];
-                let size = status.frontier.length;
-                if (size > 0) {
-                    let newGrid = copyGrid(status.grid);
-                    let pos = status.frontier[status.frontier.length - 1];
-                    for (let offset of OFFSETS) {
-                        let next = getNextPos(pos, offset);
-                        if (isValidPos(next)) {
-                            if (newGrid[next[0]][next[1]] == 0) {
-                                nexts.push(next);
-                                newGrid[next[0]][next[1]] = status.step + 1;
-                                break;
-                            }
-                        }
-                    }
-                    let newStatus = {
-                        ...status,
-                        grid: newGrid,
-                    };
-                    if (nexts.length === 0) {
-                        // nothing to visit from current node, pop the node from stack and
-                        // skip to next iteration immediately
-                        newStatus = {
-                            ...newStatus,
-                            frontier: status.frontier.slice(0, -1),
-                        };
-                        setTimeout(() => {
-                            setStatus(newStatus);
-                        }, PAUSE_BETWEEN_SKIP);
-                    } else {
-                        newStatus = {
-                            ...newStatus,
-                            frontier: [...status.frontier, ...nexts],
-                            step: status.step + 1,
-                        };
-                        setTimeout(() => {
-                            setStatus(newStatus);
-                        }, PAUSE_BETWEEN_STEP);
+                let newGrid = copyGrid(status.grid);
+                let pos = status.frontier[status.frontier.length - 1];
+                for (let offset of OFFSETS) {
+                    let next = getNextPos(pos, offset);
+                    if (isValidPos(next) && newGrid[next[0]][next[1]] == 0) {
+                        nexts.push(next);
+                        newGrid[next[0]][next[1]] = status.step + 1;
+                        break;
                     }
                 }
+                let newStatus = {
+                    ...status,
+                    grid: newGrid,
+                };
+                if (nexts.length === 0) {
+                    // nothing to visit from current node, pop the node from stack and
+                    // skip to next iteration immediately
+                    newStatus = {
+                        ...newStatus,
+                        frontier: status.frontier.slice(0, -1),
+                    };
+                    setTimeout(() => {
+                        setStatus(newStatus);
+                    }, PAUSE_BETWEEN_SKIP);
+                } else {
+                    newStatus = {
+                        ...newStatus,
+                        frontier: [...status.frontier, ...nexts],
+                        step: status.step + 1,
+                    };
+                    setTimeout(() => {
+                        setStatus(newStatus);
+                    }, PAUSE_BETWEEN_STEP);
+                }
             }
+        } else {
+            setStatus({ ...status, disabledInput: false });
         }
     }, [status]);
 
@@ -131,6 +129,7 @@ function App() {
             ...status,
             frontier: [[status.startPos.r, status.startPos.c]],
             step: INIT_STEP,
+            disabledInput: true,
         });
     };
 
@@ -223,6 +222,7 @@ function App() {
                 <Stack className="inputArea" direction="row" spacing={2}>
                     <TextField
                         fullWidth
+                        disabled={status.disabledInput}
                         type="number"
                         variant="standard"
                         label="Rows"
@@ -233,6 +233,7 @@ function App() {
                     />
                     <TextField
                         fullWidth
+                        disabled={status.disabledInput}
                         type="number"
                         variant="standard"
                         label="Columns"
@@ -246,6 +247,7 @@ function App() {
                 <Stack className="inputArea" direction="row" spacing={1}>
                     <TextField
                         fullWidth
+                        disabled={status.disabledInput}
                         type="number"
                         variant="standard"
                         label="Start Row"
@@ -256,6 +258,7 @@ function App() {
                     />
                     <TextField
                         fullWidth
+                        disabled={status.disabledInput}
                         type="number"
                         variant="standard"
                         label="Start Column"
@@ -270,6 +273,7 @@ function App() {
                         <InputLabel id="algo-select-label">Algorithm</InputLabel>
                         <Select
                             labelId="algo-select-label"
+                            disabled={status.disabledInput}
                             id="algo-select"
                             value={status.algo}
                             label="Algorithm"
@@ -281,10 +285,20 @@ function App() {
                     </FormControl>
                 </Stack>
                 <Stack className="inputArea buttons" direction="row" spacing={1}>
-                    <Button fullWidth variant="outlined" onClick={handleStart}>
+                    <Button
+                        fullWidth
+                        disabled={status.disabledInput}
+                        variant="outlined"
+                        onClick={handleStart}
+                    >
                         Start
                     </Button>
-                    <Button fullWidth variant="outlined" onClick={handleReset}>
+                    <Button
+                        fullWidth
+                        disabled={status.disabledInput}
+                        variant="outlined"
+                        onClick={handleReset}
+                    >
                         Reset
                     </Button>
                 </Stack>
