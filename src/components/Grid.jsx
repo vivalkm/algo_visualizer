@@ -7,7 +7,13 @@ export default function Grid({ status, handleSelectStartPos }) {
     const grid = status.grid;
     const renderedGrid = grid.map((rowData, i) => {
         return (
-            <Row key={i} rowData={rowData} rowId={i} handleSelectStartPos={handleSelectStartPos} />
+            <Row
+                key={i}
+                rowData={rowData}
+                status={status}
+                rowId={i}
+                handleSelectStartPos={handleSelectStartPos}
+            />
         );
     });
 

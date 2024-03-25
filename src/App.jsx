@@ -35,12 +35,16 @@ function App() {
         step: INIT_STEP,
         dim: DEFAULT_DIM,
         startPos: DEFAULT_START_POS,
-        algo: "",
+        algo: "bfs",
     });
 
     useEffect(() => {
         const isValidPos = (pos) => {
             return pos[0] >= 0 && pos[0] < status.dim.m && pos[1] >= 0 && pos[1] < status.dim.n;
+        };
+
+        const getNextPos = (pos, offset) => {
+            return [pos[0] + offset[0], pos[1] + offset[1]];
         };
 
         if (status.frontier.length > 0) {
@@ -52,7 +56,7 @@ function App() {
                     while (size-- > 0) {
                         let pos = status.frontier.shift();
                         for (let offset of OFFSETS) {
-                            let next = [pos[0] + offset[0], pos[1] + offset[1]];
+                            let next = getNextPos(pos, offset);
                             if (isValidPos(next)) {
                                 if (newGrid[next[0]][next[1]] == 0) {
                                     nexts.push(next);
@@ -61,15 +65,17 @@ function App() {
                             }
                         }
                     }
-                    let newStatus = {
-                        ...status,
-                        grid: newGrid,
-                        frontier: nexts,
-                        step: status.step + 1,
-                    };
-                    setTimeout(() => {
-                        setStatus(newStatus);
-                    }, PAUSE_BETWEEN_STEP);
+                    if (nexts.length > 0) {
+                        let newStatus = {
+                            ...status,
+                            grid: newGrid,
+                            frontier: nexts,
+                            step: status.step + 1,
+                        };
+                        setTimeout(() => {
+                            setStatus(newStatus);
+                        }, PAUSE_BETWEEN_STEP);
+                    }
                 }
             } else if (status.algo === "dfs") {
                 let nexts = [];
@@ -78,7 +84,7 @@ function App() {
                     let newGrid = copyGrid(status.grid);
                     let pos = status.frontier[status.frontier.length - 1];
                     for (let offset of OFFSETS) {
-                        let next = [pos[0] + offset[0], pos[1] + offset[1]];
+                        let next = getNextPos(pos, offset);
                         if (isValidPos(next)) {
                             if (newGrid[next[0]][next[1]] == 0) {
                                 nexts.push(next);
@@ -92,6 +98,8 @@ function App() {
                         grid: newGrid,
                     };
                     if (nexts.length === 0) {
+                        // nothing to visit from current node, pop the node from stack and
+                        // skip to next iteration immediately
                         newStatus = {
                             ...newStatus,
                             frontier: status.frontier.slice(0, -1),
@@ -111,12 +119,6 @@ function App() {
                     }
                 }
             }
-        } else if (status.step > 1) {
-            // reset step after simulation is done
-            setStatus({
-                ...status,
-                step: INIT_STEP,
-            });
         }
     }, [status]);
 
@@ -125,7 +127,11 @@ function App() {
      */
     const handleStart = () => {
         // push start pos to frontier queue to trigger simulation
-        setStatus({ ...status, frontier: [[status.startPos.r, status.startPos.c]] });
+        setStatus({
+            ...status,
+            frontier: [[status.startPos.r, status.startPos.c]],
+            step: INIT_STEP,
+        });
     };
 
     /**
