@@ -194,6 +194,7 @@ function App() {
                 ...status,
                 startPos: newStartPos,
                 grid: createGrid(status.dim.m, status.dim.n, newStartPos.r, newStartPos.c),
+                step: 1,
             });
         }
     };
