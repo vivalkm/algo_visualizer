@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Grid from "./components/Grid";
 import { copyGrid, createGrid } from "./util/helper";
-import { Stack, TextField } from "@mui/material";
+import { Button, Container, Stack, TextField } from "@mui/material";
 
 function App() {
     const [status, setStatus] = useState({
@@ -50,6 +50,12 @@ function App() {
                     let newStatus = { ...status, grid: newGrid, q: nexts, step: status.step + 1 };
                     setStatus(newStatus);
                 }
+            } else if (status.step > 1) {
+                // reset step after simulation is done
+                setStatus({
+                    ...status,
+                    step: 1,
+                });
             }
         }, 300);
     }, [status]);
@@ -66,13 +72,15 @@ function App() {
      * Change dim of grid given input value
      */
     const handleDimChange = (event) => {
-        if (event.target.value > 0) {
+        if (event.target.value > 0 && event.target.value <= 20) {
             let newDim = { ...status.dim, [event.target.name]: event.target.value };
             setStatus({
                 ...status,
                 dim: newDim,
                 grid: createGrid(newDim.m, newDim.n, status.startPos.r, status.startPos.c),
             });
+        } else {
+            window.alert("Please enter 1 - 20.");
         }
     };
 
@@ -105,51 +113,66 @@ function App() {
 
     return (
         <>
-            <Stack className="inputArea" direction="row" spacing={1}>
-                <TextField
-                    type="number"
-                    variant="standard"
-                    label="Rows"
-                    name="m"
-                    InputProps={{ inputProps: { min: 1, max: 20 } }}
-                    value={status.dim.m}
-                    onChange={handleDimChange}
-                />
-                <TextField
-                    type="number"
-                    variant="standard"
-                    label="Columns"
-                    name="n"
-                    InputProps={{ inputProps: { min: 1, max: 20 } }}
-                    value={status.dim.n}
-                    onChange={handleDimChange}
-                />
-            </Stack>
+            <Container maxWidth="sm">
+                <Stack className="inputArea" direction="row" spacing={2}>
+                    <TextField
+                        fullWidth
+                        type="number"
+                        variant="standard"
+                        label="Rows"
+                        name="m"
+                        InputProps={{ inputProps: { min: 1, max: 20 } }}
+                        value={status.dim.m}
+                        onChange={handleDimChange}
+                    />
+                    <TextField
+                        fullWidth
+                        type="number"
+                        variant="standard"
+                        label="Columns"
+                        name="n"
+                        InputProps={{ inputProps: { min: 1, max: 20 } }}
+                        value={status.dim.n}
+                        onChange={handleDimChange}
+                    />
+                </Stack>
 
-            <Stack className="inputArea" direction="row" spacing={1}>
-                <TextField
-                    type="number"
-                    variant="standard"
-                    label="Start Row"
-                    name="r"
-                    InputProps={{ inputProps: { min: 1, max: status.dim.m } }}
-                    value={status.startPos.r + 1}
-                    onChange={handleStartPosChange}
-                />
-                <TextField
-                    type="number"
-                    variant="standard"
-                    label="Start Column"
-                    name="c"
-                    InputProps={{ inputProps: { min: 1, max: status.dim.n } }}
-                    value={status.startPos.c + 1}
-                    onChange={handleStartPosChange}
-                />
-                <button onClick={handleStart}>Start</button>
-                <button onClick={handleReset}>Reset</button>
-            </Stack>
-
-            <Grid status={status} />
+                <Stack className="inputArea" direction="row" spacing={1}>
+                    <TextField
+                        fullWidth
+                        type="number"
+                        variant="standard"
+                        label="Start Row"
+                        name="r"
+                        InputProps={{ inputProps: { min: 1, max: status.dim.m } }}
+                        value={status.startPos.r + 1}
+                        onChange={handleStartPosChange}
+                    />
+                    <TextField
+                        fullWidth
+                        type="number"
+                        variant="standard"
+                        label="Start Column"
+                        name="c"
+                        InputProps={{ inputProps: { min: 1, max: status.dim.n } }}
+                        value={status.startPos.c + 1}
+                        onChange={handleStartPosChange}
+                    />
+                </Stack>
+                <Stack className="inputArea buttons" direction="row" spacing={1}>
+                    <Button fullWidth variant="outlined" onClick={handleStart}>
+                        Start
+                    </Button>
+                    <Button fullWidth variant="outlined" onClick={handleReset}>
+                        Reset
+                    </Button>
+                </Stack>
+            </Container>
+            <Container maxWidth="sm">
+                <div className="grid">
+                    <Grid status={status} />
+                </div>
+            </Container>
         </>
     );
 }
