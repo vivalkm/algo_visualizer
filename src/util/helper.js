@@ -17,10 +17,10 @@ export function copyGrid(grid) {
 }
 
 /**
- * 
+ *
  * @param {number} m Number of rows of grid
  * @param {number} n Number of columns of grid
- * @param {number} r Row of the starting position 
+ * @param {number} r Row of the starting position
  * @param {number} c Column of the starting position
  * @returns {Array} A new grid of size m * n filled with 0, and grid[r][c] is set to 1
  */
