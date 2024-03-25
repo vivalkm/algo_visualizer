@@ -1,8 +1,9 @@
-# React + Vite
+# Algo Visualizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This app visualizes BFS and DFS algorithms.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Features:
+- User can choose grid size
+- User can choose starting point using input or selecting a tile on the grid
+- Tile color changes where the most recent visited color is darkest, and gradually becomes lighter
+- User can select either BFS or DFS to visualize
