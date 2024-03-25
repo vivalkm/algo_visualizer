@@ -72,8 +72,9 @@ function App() {
      * Change dim of grid given input value
      */
     const handleDimChange = (event) => {
-        if (event.target.value > 0 && event.target.value <= 20) {
-            let newDim = { ...status.dim, [event.target.name]: event.target.value };
+        let value = Math.round(event.target.value);
+        if (value > 0 && value <= 20) {
+            let newDim = { ...status.dim, [event.target.name]: value };
             setStatus({
                 ...status,
                 dim: newDim,
@@ -88,13 +89,18 @@ function App() {
      * Change start position on grid given input value
      */
     const handleStartPosChange = (event) => {
-        if (event.target.value > 0) {
-            let newStartPos = { ...status.startPos, [event.target.name]: event.target.value - 1 };
-            setStatus({
-                ...status,
-                startPos: newStartPos,
-                grid: createGrid(status.dim.m, status.dim.n, newStartPos.r, newStartPos.c),
-            });
+        let value = Math.round(event.target.value);
+        if (value > 0) {
+            let newStartPos = { ...status.startPos, [event.target.name]: value - 1 };
+            if (newStartPos.r >= status.dim || newStartPos.c >= status.dim.n) {
+                window.alert("Start position must be within the grid.");
+            } else {
+                setStatus({
+                    ...status,
+                    startPos: newStartPos,
+                    grid: createGrid(status.dim.m, status.dim.n, newStartPos.r, newStartPos.c),
+                });
+            }
         }
     };
 
